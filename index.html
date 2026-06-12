@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#8f365e">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Jiang Yike's Secret">
+  <title>Jiang Yike's Secret</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="orientation-lock" aria-live="polite">
+    <div class="rotate-device" aria-hidden="true">↻</div>
+    <strong>请横屏游玩</strong>
+    <span>转动平板，礼物召唤阵正在等你</span>
+  </div>
+
+  <main id="game-shell" aria-label="礼物召唤小游戏">
+    <div class="ambient-stars" aria-hidden="true"></div>
+
+    <section id="scene-start" class="scene active" data-scene="start">
+      <button class="secret-reset-title" type="button" aria-label="Jiang Yike's Secret">
+        <span class="eyebrow">JUNE 12</span>
+        <h1>JIANG YIKE'S SECRET</h1>
+      </button>
+
+      <div class="film-gallery">
+        <div class="film-stage film-stage-outer" aria-hidden="true">
+          <div id="film-ring" class="film-ring film-ring-outer"></div>
+        </div>
+        <div class="film-stage film-stage-inner" aria-hidden="true">
+          <div id="film-ring-inner" class="film-ring film-ring-inner"></div>
+        </div>
+        <div class="film-glow" aria-hidden="true"></div>
+
+        <div class="start-copy pixel-panel">
+          <p>Happy Birthday for My Cherished One.</p>
+          <button id="start-button" class="pixel-button primary-button" type="button">
+            <span>ENTER</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="scene-hub" class="scene" data-scene="hub">
+      <header class="scene-header hub-header">
+        <div>
+          <span class="eyebrow">GIFT CHAMBER</span>
+          <h2>礼物能量室</h2>
+        </div>
+        <div class="progress-box">
+          <span>能量收集</span>
+          <strong id="hub-progress">0 / 5</strong>
+        </div>
+      </header>
+
+      <div id="hub-room" class="hub-room">
+        <div class="room-stage" aria-hidden="true">
+          <div class="env-leftwall"></div>
+          <div class="env-rightwall"></div>
+          <div class="env-backwall"></div>
+          <div class="env-floor"></div>
+        </div>
+        <div class="room-ceiling" aria-hidden="true"></div>
+        <div class="wall-panels" aria-hidden="true"></div>
+        <div class="room-window" aria-hidden="true">
+          <i></i><i></i><i></i><i></i>
+        </div>
+        <div class="window-curtain curtain-left" aria-hidden="true"></div>
+        <div class="window-curtain curtain-right" aria-hidden="true"></div>
+        <div class="wall-lamp left" aria-hidden="true"></div>
+        <div class="wall-lamp right" aria-hidden="true"></div>
+        <div class="floor-lines" aria-hidden="true"></div>
+        <div class="room-rug" aria-hidden="true"></div>
+        <div class="floor-glow" aria-hidden="true">
+          <i class="glow-stella"></i><i class="glow-dog"></i><i class="glow-hand"></i><i class="glow-blind"></i><i class="glow-aitips"></i>
+        </div>
+        <svg class="energy-streams" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="es-stella" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#be9dff" stop-opacity="0"/><stop offset="1" stop-color="#fff5b3"/></linearGradient>
+            <linearGradient id="es-dog" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9fc5" stop-opacity="0"/><stop offset="1" stop-color="#ffd77d"/></linearGradient>
+            <linearGradient id="es-hand" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9edcff" stop-opacity="0"/><stop offset="1" stop-color="#fff2c6"/></linearGradient>
+            <linearGradient id="es-blind" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffc56e" stop-opacity="0"/><stop offset="1" stop-color="#fff8c7"/></linearGradient>
+            <linearGradient id="es-aitips" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#bfafff" stop-opacity="0"/><stop offset="1" stop-color="#ffd5ec"/></linearGradient>
+          </defs>
+          <path class="stream stream-aitips" d="M500,214 Q500,255 500,288"/>
+          <path class="stream stream-dog" d="M236,300 Q372,302 470,298"/>
+          <path class="stream stream-hand" d="M764,300 Q628,302 530,298"/>
+          <path class="stream stream-stella" d="M322,438 Q416,372 486,318"/>
+          <path class="stream stream-blind" d="M678,438 Q584,372 514,318"/>
+        </svg>
+        <div class="hub-magic-dust" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+
+        <button class="hub-entry entry-stella" data-game="stella" type="button" aria-label="进入星光接力">
+          <span class="entry-status">未点亮</span>
+          <span class="reward-frame">
+            <span class="energy-orb" aria-hidden="true"><i></i><i></i><i></i></span>
+            <img src="gifts/disneyxdl.png" alt="">
+            <span class="lock-mark">?</span>
+          </span>
+          <span class="pedestal"></span>
+          <strong>星光接力</strong>
+        </button>
+
+        <button class="hub-entry entry-dog" data-game="dog" type="button" aria-label="进入愤怒小狗出击">
+          <span class="entry-status">未点亮</span>
+          <span class="reward-frame">
+            <span class="energy-orb" aria-hidden="true"><i></i><i></i><i></i></span>
+            <img src="gifts/jcdog.png" alt="">
+            <span class="lock-mark">?</span>
+          </span>
+          <span class="pedestal"></span>
+          <strong>愤怒小狗出击</strong>
+        </button>
+
+        <button class="hub-entry entry-hand" data-game="hand" type="button" aria-label="进入治愈连连看">
+          <span class="entry-status">未点亮</span>
+          <span class="reward-frame">
+            <span class="energy-orb" aria-hidden="true"><i></i><i></i><i></i></span>
+            <img src="gifts/dior.png" alt="">
+            <span class="lock-mark">?</span>
+          </span>
+          <span class="pedestal"></span>
+          <strong>治愈翻翻乐</strong>
+        </button>
+
+        <button class="hub-entry entry-blind" data-game="blind" type="button" aria-label="进入欧气盲盒机">
+          <span class="entry-status">未点亮</span>
+          <span class="reward-frame">
+            <span class="energy-orb" aria-hidden="true"><i></i><i></i><i></i></span>
+            <img src="gifts/zsiga.png" alt="">
+            <span class="lock-mark">?</span>
+          </span>
+          <span class="pedestal"></span>
+          <strong>欧气盲盒机</strong>
+        </button>
+
+        <button class="hub-entry entry-aitips" data-game="aitips" type="button" aria-label="进入AI心动便利贴">
+          <span class="entry-status">未点亮</span>
+          <span class="reward-frame">
+            <span class="energy-orb" aria-hidden="true"><i></i><i></i><i></i></span>
+            <img src="gifts/aitips.png" alt="">
+            <span class="lock-mark">?</span>
+          </span>
+          <span class="pedestal"></span>
+          <strong>AI 心动便利贴</strong>
+        </button>
+
+        <div class="altar-mount" aria-hidden="true"></div>
+        <button id="summon-gate" class="summon-gate locked" type="button" aria-label="中央礼物召唤阵，尚未解锁">
+          <span class="gate-cage" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span class="rune rune-outer"></span>
+          <span class="rune rune-middle"></span>
+          <span class="rune rune-inner"><i class="rune-core"></i></span>
+          <span class="gate-core" aria-hidden="true"></span>
+          <strong id="gate-label">能量未集齐</strong>
+          <small id="gate-hint">还需要收集全部礼物能量</small>
+        </button>
+      </div>
+      <div id="hub-toast" class="game-toast" role="status" aria-live="polite"></div>
+    </section>
+
+    <section id="scene-stella" class="scene game-scene" data-scene="stella">
+      <header class="scene-header">
+        <button class="back-button" data-back="hub" type="button">← 返回房间</button>
+        <div class="game-title">
+          <h2>星光接力</h2>
+        </div>
+        <div class="score-chip">星星 <strong id="star-score">0 / 6</strong></div>
+      </header>
+      <div id="star-field" class="star-field">
+        <div class="moon" aria-hidden="true"></div>
+        <div class="cloud cloud-a" aria-hidden="true"></div>
+        <div class="cloud cloud-b" aria-hidden="true"></div>
+        <p class="game-instruction">按住下方区域左右拖动篮子 · 避开小炸弹</p>
+        <div id="basket" class="basket" aria-label="星星篮子">
+          <span class="basket-handle"></span>
+          <span class="basket-body">✦</span>
+        </div>
+      </div>
+      <div class="touch-strip">在这里左右拖动</div>
+      <div id="stella-message" class="level-message" aria-live="polite"></div>
+    </section>
+
+    <section id="scene-dog" class="scene game-scene" data-scene="dog">
+      <header class="scene-header">
+        <button class="back-button" data-back="hub" type="button">← 返回房间</button>
+        <div class="game-title">
+          <h2>愤怒小狗出击</h2>
+        </div>
+        <div class="score-chip">关卡 <strong id="dog-level-score">1 / 3</strong></div>
+      </header>
+      <div class="dog-battle-layout">
+        <div class="dog-battle-wrap">
+          <div id="dog-battle" class="dog-battle" aria-label="小狗弹射战场">
+            <div id="dog-level-banner" class="dog-level-banner" aria-hidden="true">LEVEL 1</div>
+            <div class="battle-sun" aria-hidden="true"></div>
+            <div class="battle-cloud cloud-one" aria-hidden="true"></div>
+            <div class="battle-cloud cloud-two" aria-hidden="true"></div>
+            <div class="battle-hills" aria-hidden="true"></div>
+            <div class="distant-trees" aria-hidden="true"></div>
+            <div id="dog-ammo" class="dog-ammo" aria-hidden="true"></div>
+            <div id="sling-band-back" class="sling-band sling-band-back" aria-hidden="true"></div>
+            <div class="slingshot" aria-hidden="true"></div>
+            <div id="trajectory-dots" class="trajectory-dots" aria-hidden="true"></div>
+            <button id="dog-projectile" class="dog-projectile" type="button" aria-label="按住并拖动小狗">
+              <span class="dog-sprite" aria-hidden="true">
+                <img src="catDog/dog.png" alt="" draggable="false">
+              </span>
+            </button>
+            <div id="sling-band-front" class="sling-band sling-band-front" aria-hidden="true"></div>
+            <div id="cat-fort" class="cat-fort" aria-label="黑猫堡垒"></div>
+            <div class="battle-ground" aria-hidden="true"></div>
+          </div>
+          <div class="battle-toolbar">
+            <p id="dog-battle-tip" class="game-instruction">按住小狗向左后方拉，松手发射</p>
+            <div class="battle-meter">
+              小狗 <strong id="dog-ammo-count">3</strong>
+              <span aria-hidden="true">·</span>
+              黑猫 <strong id="cat-count">1</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="dog-message" class="level-message" aria-live="polite"></div>
+    </section>
+
+    <section id="scene-hand" class="scene game-scene" data-scene="hand">
+      <header class="scene-header">
+        <button class="back-button" data-back="hub" type="button">← 返回房间</button>
+        <div class="game-title">
+          <h2>治愈翻翻乐</h2>
+        </div>
+        <div class="score-chip">关卡 <strong id="match-level-score">1 / 3</strong></div>
+      </header>
+      <div class="match-layout">
+        <div class="match-board-wrap">
+          <div id="match-board" class="match-board" aria-label="治愈连连看棋盘"></div>
+          <div class="board-footer">
+            <p id="match-tip" class="game-instruction">翻开两张，找出相同的图案</p>
+            <span class="board-meter">剩余 <strong id="match-pairs-left">4</strong> 对</span>
+          </div>
+        </div>
+      </div>
+      <div id="hand-message" class="level-message" aria-live="polite"></div>
+    </section>
+
+    <section id="scene-blind" class="scene game-scene" data-scene="blind">
+      <header class="scene-header">
+        <button class="back-button" data-back="hub" type="button">← 返回房间</button>
+        <div class="game-title">
+          <h2>欧气盲盒机</h2>
+        </div>
+        <div class="score-chip">关卡 <strong id="blind-level-score">1 / 3</strong></div>
+      </header>
+      <div class="blind-stage">
+        <div class="marquee">
+          <span>✦</span><strong id="blind-prompt">盲盒正在交换位置…</strong><span>✦</span>
+        </div>
+        <div id="blindbox-board" class="blindbox-board" aria-label="幸运盲盒选择区"></div>
+        <div class="blind-machine-base"><span>LUCKY GIFT MACHINE · ♡</span></div>
+      </div>
+      <div id="blind-message" class="level-message" aria-live="polite"></div>
+    </section>
+
+    <section id="scene-aitips" class="scene game-scene" data-scene="aitips">
+      <header class="scene-header">
+        <button class="back-button" data-back="hub" type="button">← 返回房间</button>
+        <div class="game-title">
+          <h2>AI 心动便利贴</h2>
+        </div>
+        <div class="score-chip">关卡 <strong id="aitips-level-score">1 / 3</strong></div>
+      </header>
+      <div class="aitips-layout">
+        <div class="aitips-board-wrap">
+          <div class="ai-core" aria-hidden="true">
+            <span class="ai-core-ring"></span>
+            <span class="ai-core-ring"></span>
+            <span class="ai-core-dot"></span>
+          </div>
+          <div class="marquee aitips-marquee">
+            <span>✦</span><strong id="aitips-prompt">AI 正在写下今天的便利贴…</strong><span>✦</span>
+          </div>
+          <div id="aitips-board" class="aitips-board" aria-label="便利贴记忆区"></div>
+          <div class="board-footer">
+            <p id="aitips-tip" class="game-instruction">看 AI 点亮便利贴的顺序</p>
+            <span class="board-meter">本轮 <strong id="aitips-len">3</strong> 张</span>
+          </div>
+        </div>
+      </div>
+      <div id="aitips-message" class="level-message" aria-live="polite"></div>
+    </section>
+
+    <section id="scene-final" class="scene" data-scene="final">
+      <header class="scene-header final-header">
+        <div>
+          <span class="eyebrow">FINAL RITUAL</span>
+          <h2>终极礼物召唤</h2>
+        </div>
+        <span class="final-status" id="final-status">法阵等待回应</span>
+      </header>
+
+      <div id="final-stage" class="final-stage">
+        <div class="final-energy energy-aitips"><img src="gifts/aitips.png" alt=""></div>
+        <div class="final-energy energy-stella"><img src="gifts/disneyxdl.png" alt=""></div>
+        <div class="final-energy energy-dog"><img src="gifts/jcdog.png" alt=""></div>
+        <div class="final-energy energy-hand"><img src="gifts/dior.png" alt=""></div>
+        <div class="final-energy energy-blind"><img src="gifts/zsiga.png" alt=""></div>
+
+        <div class="final-circle" aria-hidden="true">
+          <span class="rune rune-outer"></span>
+          <span class="rune rune-middle"></span>
+          <span class="rune rune-inner"><i class="rune-core"></i></span>
+        </div>
+
+        <div id="password-panel" class="password-panel pixel-panel">
+          <p>输入属于这一天的四位召唤密码</p>
+          <div id="password-display" class="password-display" aria-label="已输入 0 位密码">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <p id="password-feedback" class="password-feedback" aria-live="polite">密码提示：六月的特别日子</p>
+          <div id="keypad" class="keypad">
+            <button type="button" data-key="1">1</button>
+            <button type="button" data-key="2">2</button>
+            <button type="button" data-key="3">3</button>
+            <button type="button" data-key="4">4</button>
+            <button type="button" data-key="5">5</button>
+            <button type="button" data-key="6">6</button>
+            <button type="button" data-key="7">7</button>
+            <button type="button" data-key="8">8</button>
+            <button type="button" data-key="9">9</button>
+            <button class="delete-key" type="button" data-key="delete">删除</button>
+            <button type="button" data-key="0">0</button>
+            <button class="confirm-key" type="button" data-key="confirm">确认</button>
+          </div>
+        </div>
+
+        <div id="final-reveal" class="final-reveal" aria-live="polite">
+          <div class="gift-rays" aria-hidden="true"></div>
+          <div class="ultimate-gift">
+            <img src="gifts/djp4.png" alt="大疆 Pocket 4">
+          </div>
+          <span class="eyebrow">LEGENDARY GIFT UNLOCKED</span>
+          <h3>大疆 Pocket 4</h3>
+          <p id="final-copy"></p>
+        </div>
+      </div>
+    </section>
+
+    <div id="reward-unlock" class="reward-unlock" aria-live="assertive" aria-hidden="true">
+      <div class="unlock-stars" aria-hidden="true"></div>
+      <div class="reward-unlock-card">
+        <span id="reward-unlock-kicker" class="eyebrow">SECRET GIFT UNLOCKED</span>
+        <div class="reward-unlock-art">
+          <span class="reward-mystery">?</span>
+          <img id="reward-unlock-image" src="" alt="">
+        </div>
+        <h2 id="reward-unlock-title"></h2>
+        <p id="reward-unlock-copy">秘密礼物已加入召唤阵</p>
+      </div>
+    </div>
+
+    <div class="utility-controls">
+      <button id="music-toggle-button" type="button" aria-pressed="false">播放音乐</button>
+      <button id="fullscreen-button" type="button">全屏</button>
+      <button id="reset-progress-button" type="button">重置进度</button>
+    </div>
+    <div id="system-toast" class="system-toast" role="status" aria-live="polite"></div>
+    <div id="reset-confirm" class="reset-confirm" role="dialog" aria-modal="true" aria-labelledby="reset-confirm-title" aria-hidden="true">
+      <div class="reset-confirm-card pixel-panel">
+        <span class="eyebrow">RESET GAME</span>
+        <h2 id="reset-confirm-title">清除全部进度？</h2>
+        <p>已点亮的礼物和最终召唤状态都会被清除。</p>
+        <div class="reset-confirm-actions">
+          <button id="reset-cancel-button" type="button">取消</button>
+          <button id="reset-confirm-button" type="button">确认清除</button>
+        </div>
+      </div>
+    </div>
+
+    <button id="secret-reset-corner" type="button" aria-label="隐藏重置区域"></button>
+    <div id="start-transition" class="start-transition" aria-hidden="true">
+      <div id="start-transition-particles" class="start-transition-particles"></div>
+    </div>
+    <div id="global-flash" aria-hidden="true"></div>
+    <audio id="home-song" src="music/小情歌.mp3" preload="auto" loop playsinline webkit-playsinline></audio>
+  </main>
+
+  <script src="effects.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
