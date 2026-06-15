@@ -2046,9 +2046,9 @@
   }
 
   const BLIND_LEVELS = [
-    { count: 3, columns: 3, rows: 1, swaps: 10, speed: 460, anyChoice: false },
-    { count: 5, columns: 5, rows: 1, swaps: 14, speed: 360, anyChoice: false },
-    { count: 100, columns: 10, rows: 10, swaps: 70, speed: 18, anyChoice: true }
+    { count: 3, columns: 3, rows: 1, swaps: 10, speed: 460 },
+    { count: 5, columns: 5, rows: 1, swaps: 14, speed: 360 },
+    { count: 25, columns: 5, rows: 5, finalSpin: true }
   ];
 
   function enterBlind() {
@@ -2060,6 +2060,7 @@
     let nodes = [];
     let canChoose = false;
     let completed = false;
+    let failedAttempts = 0;
 
     function createConfetti(box) {
       const stage = document.querySelector(".blind-stage");
@@ -2079,28 +2080,117 @@
       }
     }
 
-    function applyPositions(animate = true) {
+    function gridPosition(node, slot) {
       const level = BLIND_LEVELS[levelIndex];
       const width = board.clientWidth;
       const height = board.clientHeight;
       const cellWidth = width / level.columns;
       const cellHeight = height / level.rows;
-      const compact = level.count >= 50;
-      const gap = compact ? 4 : level.count === 5 ? 14 : 24;
+      const compact = level.count >= 25;
+      const gap = compact ? 8 : level.count === 5 ? 14 : 24;
+      const column = slot % level.columns;
+      const row = Math.floor(slot / level.columns);
+      const nodeWidth = Math.max(12, Math.min(cellWidth - gap, compact ? cellHeight * 1.05 : cellWidth));
+      const nodeHeight = compact
+        ? Math.max(12, cellHeight - gap)
+        : Math.min(height * 0.82, nodeWidth * 1.18);
+      return {
+        width: nodeWidth,
+        height: nodeHeight,
+        x: column * cellWidth + (cellWidth - nodeWidth) / 2,
+        y: row * cellHeight + (cellHeight - nodeHeight) / 2
+      };
+    }
+
+    function applyPositions(animate = true, duration = null) {
+      const level = BLIND_LEVELS[levelIndex];
       nodes.forEach(({ node, slot }) => {
-        const column = slot % level.columns;
-        const row = Math.floor(slot / level.columns);
-        const nodeWidth = Math.max(12, cellWidth - gap);
-        const nodeHeight = compact
-          ? Math.max(12, cellHeight - gap)
-          : Math.min(height * 0.82, nodeWidth * 1.18);
-        const x = column * cellWidth + (cellWidth - nodeWidth) / 2;
-        const y = row * cellHeight + (cellHeight - nodeHeight) / 2;
-        node.style.transitionDuration = animate ? `${Math.max(35, BLIND_LEVELS[levelIndex].speed)}ms` : "0ms";
-        node.style.width = `${nodeWidth}px`;
-        node.style.height = `${nodeHeight}px`;
-        node.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+        const position = gridPosition(node, slot);
+        node.style.transitionDuration = animate
+          ? `${duration ?? Math.max(35, level.speed || 120)}ms`
+          : "0ms";
+        node.style.width = `${position.width}px`;
+        node.style.height = `${position.height}px`;
+        node.style.transform = `translate3d(${position.x}px, ${position.y}px, 0)`;
       });
+    }
+
+    function orbitPosition(node, index, angleOffset) {
+      const width = board.clientWidth;
+      const height = board.clientHeight;
+      const nodeWidth = node.offsetWidth;
+      const nodeHeight = node.offsetHeight;
+      let ringCount = 1;
+      let ringIndex = 0;
+      let radiusX = 0;
+      let radiusY = 0;
+
+      if (index > 0 && index <= 8) {
+        ringCount = 8;
+        ringIndex = index - 1;
+        radiusX = Math.min(width * 0.13, 74);
+        radiusY = Math.min(height * 0.14, 52);
+      } else if (index > 8) {
+        ringCount = 16;
+        ringIndex = index - 9;
+        radiusX = Math.min(width * 0.27, 150);
+        radiusY = Math.min(height * 0.29, 104);
+      }
+
+      const angle = angleOffset + (ringIndex / ringCount) * Math.PI * 2;
+      return {
+        x: width / 2 - nodeWidth / 2 + Math.cos(angle) * radiusX,
+        y: height / 2 - nodeHeight / 2 + Math.sin(angle) * radiusY
+      };
+    }
+
+    function applyOrbit(angleOffset, duration) {
+      nodes.forEach(({ node }, index) => {
+        const position = orbitPosition(node, index, angleOffset);
+        node.style.transitionDuration = `${duration}ms`;
+        node.style.transform = `translate3d(${position.x}px, ${position.y}px, 0) rotate(${angleOffset}rad)`;
+      });
+    }
+
+    function enableChoice() {
+      canChoose = true;
+      board.dataset.ready = "true";
+      board.dataset.phase = "ready";
+      nodes.forEach(({ node }) => {
+        node.disabled = false;
+      });
+      prompt.textContent = BLIND_LEVELS[levelIndex].finalSpin
+        ? "旋转结束，选中刚才发光的盲盒"
+        : "交换结束，选中刚才发光的盲盒";
+      audio.collect();
+    }
+
+    function runFinalSpin(step = 0) {
+      const spinSteps = 5;
+      const spinDuration = 320;
+      if (step >= spinSteps) {
+        board.dataset.phase = "scattering";
+        board.classList.remove("orbiting");
+        prompt.textContent = "盲盒正在散开归位…";
+        applyPositions(true, 720);
+        later(enableChoice, 780);
+        return;
+      }
+
+      board.dataset.phase = "spinning";
+      board.classList.add("orbiting");
+      prompt.textContent = "所有盲盒正在中央旋转，盯紧它！";
+      applyOrbit((step + 1) * Math.PI * 0.72, spinDuration);
+      if (step % 2 === 0) audio.tone(350 + step * 45, 0.05, "square", 0.014);
+      later(() => runFinalSpin(step + 1), spinDuration);
+    }
+
+    function gatherFinalBoxes() {
+      board.dataset.phase = "gathering";
+      board.classList.add("orbiting");
+      prompt.textContent = "盲盒正在向中央聚拢…";
+      applyOrbit(0, 620);
+      later(() => runFinalSpin(), 680);
     }
 
     function swapOnce() {
@@ -2121,15 +2211,7 @@
     function runShuffle(step = 0) {
       const level = BLIND_LEVELS[levelIndex];
       if (step >= level.swaps) {
-        canChoose = true;
-        board.dataset.ready = "true";
-        nodes.forEach(({ node }) => {
-          node.disabled = false;
-        });
-        prompt.textContent = level.anyChoice
-          ? "终极欧气关：100 个盲盒，任意选一个！"
-          : "交换结束，选中刚才发光的盲盒";
-        audio.collect();
+        enableChoice();
         return;
       }
       swapOnce();
@@ -2146,9 +2228,11 @@
         box.disabled = true;
       });
 
-      if (!level.anyChoice && node.dataset.target !== "true") {
+      const guaranteedHit = failedAttempts >= 2;
+      if (node.dataset.target !== "true" && !guaranteedHit) {
+        failedAttempts += 1;
         node.classList.add("wrong");
-        prompt.textContent = "没有选中，目标盲盒重新出现并再次洗牌";
+        prompt.textContent = "没有选中，目标盲盒重新出现并再次挑战";
         audio.bump();
         later(() => renderRound(), 900);
         return;
@@ -2160,13 +2244,14 @@
       audio.success();
       if (levelIndex === BLIND_LEVELS.length - 1) {
         completed = true;
-        prompt.textContent = "百里挑一，欧气爆棚！";
+        prompt.textContent = "25 盒中选，欧气爆棚！";
         later(() => completeGame("blind", "三关全部命中！", message), 750);
         return;
       }
       prompt.textContent = `第 ${levelIndex + 1} 关命中！`;
       later(() => {
         levelIndex += 1;
+        failedAttempts = 0;
         renderRound();
       }, 950);
     }
@@ -2174,12 +2259,12 @@
     function renderRound() {
       const level = BLIND_LEVELS[levelIndex];
       board.replaceChildren();
-      board.classList.toggle("hundred-mode", level.count === 100);
+      board.classList.toggle("final-mode", Boolean(level.finalSpin));
+      board.classList.remove("orbiting");
       board.dataset.ready = "false";
+      board.dataset.phase = "preview";
       levelScore.textContent = `${levelIndex + 1} / 3`;
-      prompt.textContent = level.anyChoice
-        ? "终极关卡载入：100 个盲盒"
-        : "记住正在发光的幸运盲盒";
+      prompt.textContent = "记住正在发光的幸运盲盒";
       canChoose = false;
       const targetIndex = Math.floor(Math.random() * level.count);
       nodes = [];
@@ -2187,7 +2272,7 @@
       for (let index = 0; index < level.count; index += 1) {
         const node = document.createElement("button");
         node.type = "button";
-        node.className = `blind-box${level.count === 100 ? " mini-box" : ""}`;
+        node.className = `blind-box${level.count >= 25 ? " mini-box" : ""}`;
         node.dataset.box = String(index);
         node.dataset.target = String(index === targetIndex);
         node.disabled = true;
@@ -2198,12 +2283,16 @@
       }
       applyPositions(false);
       const target = nodes[targetIndex].node;
-      if (!level.anyChoice) target.classList.add("target-preview");
+      target.classList.add("target-preview");
       later(() => {
         target.classList.remove("target-preview");
-        prompt.textContent = "快速交换中，盯紧它！";
-        runShuffle();
-      }, level.anyChoice ? 350 : 900);
+        if (level.finalSpin) {
+          gatherFinalBoxes();
+        } else {
+          prompt.textContent = "快速交换中，盯紧它！";
+          runShuffle();
+        }
+      }, level.finalSpin ? 1200 : 900);
     }
 
     later(renderRound, 40);

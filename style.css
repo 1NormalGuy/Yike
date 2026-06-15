@@ -2565,6 +2565,17 @@ h3 {
   transition-timing-function: cubic-bezier(.2,.8,.3,1);
 }
 
+.blindbox-board.orbiting .blind-box {
+  z-index: 10;
+  filter: drop-shadow(0 0 5px rgba(255, 227, 143, .72));
+  transition-timing-function: cubic-bezier(.45,.05,.55,.95);
+}
+
+.blindbox-board.orbiting .blind-box:nth-child(3n) {
+  z-index: 11;
+  filter: brightness(1.08) drop-shadow(0 0 7px rgba(255, 227, 143, .82));
+}
+
 .blindbox-board .blind-box.swapping {
   z-index: 8;
   filter: brightness(1.18) drop-shadow(0 0 8px #ffe6a1);
